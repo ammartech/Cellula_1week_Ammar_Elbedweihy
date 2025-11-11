@@ -1,0 +1,20 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\title{LoRA and QLoRA: Parameter-Efficient Fine-Tuning}
+\author{Cellula 1-Week Project}
+\date{\today}
+\begin{document}
+\maketitle
+
+\section{LoRA}
+Low-Rank Adaptation (LoRA) injects trainable low-rank matrices into attention/FFN projections while freezing the original weights. This yields strong fine-tuning quality with a tiny number of additional parameters.
+
+\section{QLoRA}
+QLoRA applies quantization-aware fine-tuning by loading the base model in 4-bit (or similar) while training LoRA adapters in higher precision. This drastically reduces VRAM while preserving accuracy.
+
+\section{When to Use}
+Use LoRA/QLoRA for tasks where full fine-tuning is too costly (GPU memory or wall-clock). Evaluate with F1/accuracy and track peak memory, throughput, and latency.
+
+\end{document}

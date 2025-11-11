@@ -1,0 +1,50 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\title{DistilBERT and ALBERT: A Brief Technical Overview}
+\author{Cellula 1-Week Project}
+\date{\today}
+\begin{document}
+\maketitle
+
+\section{Motivation}
+Transformer encoders such as BERT achieve strong accuracy but are expensive to train and serve. This survey highlights two compact variants---\textbf{DistilBERT} (knowledge distillation) and \textbf{ALBERT} (parameter sharing \& factorized embeddings)---that trade small drops in accuracy for sizable speed and memory savings.
+
+\section{DistilBERT in a Nutshell}
+\begin{itemize}[noitemsep]
+  \item \textbf{Idea:} Train a smaller student model to imitate a larger BERT teacher via knowledge distillation (soft targets + intermediate losses).
+  \item \textbf{Capacity:} Fewer layers (e.g., 6 vs. 12), similar hidden size; typically $\sim$40\% smaller and $\sim$60\% faster than BERT-base (reported in original release).
+  \item \textbf{Loss:} Combination of language modeling loss and distillation loss on teacher logits; sometimes cosine embedding on hidden states.
+  \item \textbf{Use Cases:} Latency-sensitive text classification, NER, QA where GPU/CPU budgets are tight.
+\end{itemize}
+
+\section{ALBERT in a Nutshell}
+\begin{itemize}[noitemsep]
+  \item \textbf{Factorized Embeddings:} Decompose the large embedding matrix into smaller factors to reduce parameters.
+  \item \textbf{Cross-Layer Parameter Sharing:} Share attention and FFN parameters across layers, drastically shrinking the model size.
+  \item \textbf{Sentence Order Prediction (SOP):} Replace BERT's Next Sentence Prediction with SOP to better learn discourse-level coherence.
+  \item \textbf{Scaling:} Despite fewer parameters, larger-hidden ALBERT variants can achieve SOTA with efficient memory use.
+\end{itemize}
+
+\section{Comparative Notes}
+\begin{itemize}[noitemsep]
+  \item \textbf{DistilBERT} reduces depth and transfers \emph{knowledge}; architecture is BERT-like.
+  \item \textbf{ALBERT} keeps depth but \emph{shares} parameters and factorizes embeddings to reduce total count.
+  \item Latency vs. memory budget may determine choice. DistilBERT often faster inference; ALBERT often minimal memory.
+\end{itemize}
+
+\section{Practical Tips}
+\begin{itemize}[noitemsep]
+  \item Start with \texttt{distilbert-base-uncased} for English or multilingual variants if needed.
+  \item For ALBERT, ensure your training loop supports parameter sharing and choose proper SOP data processing if pretraining.
+  \item For downstream fine-tuning, both integrate easily via Hugging Face Transformers.
+\end{itemize}
+
+\section{Evaluation Considerations}
+Report \textbf{F1}, accuracy, confusion matrices; profile throughput (samples/sec), latency (ms), and VRAM/CPU memory.\newline
+Include ablations for sequence length, batch size, and mixed precision.
+
+\end{document}

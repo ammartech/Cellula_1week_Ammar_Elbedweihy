@@ -1,0 +1,24 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\title{LoRA and QLoRA: Parameter-Efficient Fine-Tuning for Encoders}
+\author{Cellula 1-Week Project}
+\date{\today}
+\begin{document}
+\maketitle
+
+\section{LoRA}
+Low-Rank Adaptation injects trainable rank-$r$ adapters into attention/FFN projections while freezing base weights. Only the small adapters are updated, preserving the pretrained model and reducing VRAM and wall-clock time.
+
+\section{QLoRA}
+QLoRA loads the base model in 4-bit via quantization (e.g., NF4) and trains LoRA adapters in higher precision. Coupled with gradient checkpointing, it fits larger models on modest GPUs without a major loss in quality.
+
+\section{Implementation Tips}
+Pick target modules (e.g., \texttt{query,key,value,dense,fc1,fc2}) and tune \texttt{r, lora\_alpha, lora\_dropout}. Track stability issues (NaNs) and prefer bfloat16 for compute.
+
+\section{Evaluation}
+Report F1 (weighted/macro), accuracy, peak VRAM, and throughput. Compare full fine-tuning vs.\ LoRA/QLoRA.
+
+\end{document}

@@ -1,0 +1,52 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{hyperref}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{booktabs}
+\usepackage{enumitem}
+\title{DistilBERT and ALBERT: Compact Transformers for Efficient NLP}
+\author{Cellula 1-Week Project}
+\date{\today}
+\begin{document}
+\maketitle
+
+\section{Introduction}
+BERT-like encoders deliver strong performance but are expensive to train and deploy. We overview two compact variants---\textbf{DistilBERT} (knowledge distillation) and \textbf{ALBERT} (parameter sharing \& factorized embeddings)---and provide practical guidance for downstream tasks.
+
+\section{DistilBERT}
+\textbf{Idea:} a smaller student imitates a large BERT teacher via knowledge distillation (soft targets, optional hidden-state cosine losses). This reduces depth while keeping hidden size, yielding sizable latency gains.\vspace{0.25em}
+
+\noindent\textbf{Training signals:} (i) masked LM loss, (ii) distillation loss on teacher logits, (iii) optional intermediate-layer alignment. \vspace{0.25em}
+
+\noindent\textbf{Pros:} Simple to adopt; speedups on commodity hardware. \textbf{Cons:} Requires a trained teacher; accuracy may drop on complex tasks.
+
+\section{ALBERT}
+\textbf{Factorized embeddings} decouple vocabulary and hidden sizes, and \textbf{cross-layer parameter sharing} reuses attention/FFN parameters across layers. \textbf{Sentence Order Prediction (SOP)} replaces NSP to better learn discourse coherence.\vspace{0.25em}
+
+\noindent\textbf{Pros:} Drastically fewer parameters with competitive accuracy. \textbf{Cons:} Parameter sharing can limit layer-wise expressivity.
+
+\section{Comparison}
+\begin{center}
+\\
+\\
+\\
+\begin{tabular}{lccc}
+\\[-1.2em]
+\toprule
+ & \textbf{Params} & \textbf{Latency} & \textbf{Memory} \\\\
+\midrule
+BERT-base & High & High & High \\\\
+DistilBERT & Medium & Low & Medium \\\\
+ALBERT & Low & Medium & Low \\\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\section{Practical Guidance}
+Use DistilBERT for strict latency budgets (classification, NER, QA). Use ALBERT when memory is the primary constraint; pair with parameter-efficient fine-tuning (LoRA/QLoRA) for fast iteration.
+
+\section{Evaluation}
+Always report accuracy, \textbf{F1} (weighted and macro), confusion matrix, throughput/latency, and memory. Provide sequence-length ablations.
+
+\end{document}
